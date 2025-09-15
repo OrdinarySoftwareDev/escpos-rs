@@ -21,14 +21,14 @@ For standard functionalities (e.g. printing text), no additional dependencies ar
 
 ```toml
 [dependencies]
-escpos = "0.16.0"
+escpos = "0.17.0"
 ```
 
 If you need all [features](#Features-list), you can use the `full` feature:
 
 ```toml
 [dependencies]
-escpos = { version = "0.16.0", features = ["full"] }
+escpos = { version = "0.17.0", features = ["full"] }
 ```
 
 Or you can use `cargo add` command:
@@ -124,7 +124,7 @@ fn main() -> Result<()> {
         .underline(UnderlineMode::None)?
         .size(2, 3)?
         .writeln("Hello world - Normal")?
-        .print_cut()?; // print() or print_cut() is mandatory to send the data to the printer 
+        .print_cut()?; // print() or print_cut() is mandatory to send the data to the printer
 
     Ok(())
 }
@@ -154,7 +154,7 @@ fn main() -> Result<()> {
             )
         )?
         .feed()?
-        .print()?; // print() or print_cut() is mandatory to send the data to the printer 
+        .print()?; // print() or print_cut() is mandatory to send the data to the printer
     Ok(())
 }
 ```
@@ -178,7 +178,7 @@ fn main() -> Result<()> {
             QRCodeOption::new(QRCodeModel::Model1, 6, QRCodeCorrectionLevel::M),
         )?
         .feed()?
-        .print_cut()?; // print() or print_cut() is mandatory to send the data to the printer 
+        .print_cut()?; // print() or print_cut() is mandatory to send the data to the printer
 
     Ok(())
 }
@@ -203,7 +203,7 @@ fn main() -> Result<()> {
             BitImageOption::new(Some(128), None, BitImageSize::Normal)?,
         )?
         .feed()?
-        .print_cut()?; // print() or print_cut() is mandatory to send the data to the printer 
+        .print_cut()?; // print() or print_cut() is mandatory to send the data to the printer
 
     Ok(())
 }

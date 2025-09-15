@@ -1,12 +1,10 @@
 //! Drivers used to send data to the printer (Network or USB)
 
 use crate::errors::{PrinterError, Result};
-#[cfg(feature = "native_usb")]
-use futures_lite::future::block_on;
 #[cfg(feature = "hidapi")]
 use hidapi::{HidApi, HidDevice};
 #[cfg(feature = "native_usb")]
-use nusb::transfer::RequestBuffer;
+use nusb::{MaybeFuture, transfer::EndpointType};
 #[cfg(feature = "usb")]
 use rusb::{Context, DeviceHandle, Direction, TransferType, UsbContext, UsbOption};
 #[cfg(feature = "serial_port")]
@@ -385,10 +383,11 @@ impl NativeUsbDriver {
     /// ```
     pub fn open(vendor_id: u16, product_id: u16) -> Result<Self> {
         let device_info = nusb::list_devices()
+            .wait()
             .map_err(|e| PrinterError::Io(e.to_string()))?
             .find(|dev| dev.vendor_id() == vendor_id && dev.product_id() == product_id)
             .ok_or(PrinterError::Io("USB device not found".to_string()))?;
-        let device = device_info.open().map_err(|e| PrinterError::Io(e.to_string()))?;
+        let device = device_info.open().wait().map_err(|e| PrinterError::Io(e.to_string()))?;
 
         // Get endpoints
         let configuration = device
@@ -401,11 +400,11 @@ impl NativeUsbDriver {
                 let (mut output, mut input) = (None, None);
 
                 for endpoint in endpoints {
-                    if endpoint.transfer_type() == nusb::transfer::EndpointType::Bulk
+                    if endpoint.transfer_type() == nusb::transfer::Bulk::TYPE
                         && endpoint.direction() == nusb::transfer::Direction::Out
                     {
                         output = Some(endpoint.address())
-                    } else if endpoint.transfer_type() == nusb::transfer::EndpointType::Bulk
+                    } else if endpoint.transfer_type() == nusb::transfer::Bulk::TYPE
                         && endpoint.direction() == nusb::transfer::Direction::In
                     {
                         input = Some(endpoint.address())
@@ -433,10 +432,12 @@ impl NativeUsbDriver {
         #[cfg(not(target_os = "windows"))]
         let interface = device
             .detach_and_claim_interface(interface_number)
+            .wait()
             .map_err(|e| PrinterError::Io(e.to_string()))?;
         #[cfg(target_os = "windows")]
         let interface = device
             .claim_interface(interface_number)
+            .wait()
             .map_err(|e| PrinterError::Io(e.to_string()))?;
 
         Ok(Self {
@@ -459,25 +460,41 @@ impl Driver for NativeUsbDriver {
     }
 
     fn write(&self, data: &[u8]) -> Result<()> {
-        block_on(self.device.lock()?.bulk_out(self.output_endpoint, data.to_vec()))
-            .into_result()
+        let endpoint = self
+            .device
+            .lock()?
+            .endpoint::<nusb::transfer::Bulk, nusb::transfer::Out>(self.output_endpoint)
             .map_err(|e| PrinterError::Io(e.to_string()))?;
+
+        let max_size = endpoint.max_packet_size();
+
+        let mut writer = endpoint
+            .writer(max_size)
+            .with_write_timeout(Duration::from_secs(DEFAULT_TIMEOUT_SECONDS));
+
+        writer.write_all(data).map_err(|e| PrinterError::Io(e.to_string()))?;
+        writer.flush().map_err(|e| PrinterError::Io(e.to_string()))?;
         Ok(())
     }
 
     fn read(&self, buf: &mut [u8]) -> Result<usize> {
-        // Seems to read responses one by one
-        let mut size = 0;
-        for b in buf.iter_mut() {
-            let result = block_on(self.device.lock()?.bulk_in(self.input_endpoint, RequestBuffer::new(1)))
-                .into_result()
-                .map_err(|e| PrinterError::Io(e.to_string()))?;
+        let endpoint = self
+            .device
+            .lock()?
+            .endpoint::<nusb::transfer::Bulk, nusb::transfer::In>(self.input_endpoint)
+            .map_err(|e| PrinterError::Io(e.to_string()))?;
 
-            if !result.is_empty() {
-                *b = result[0];
-                size += 1;
-            }
-        }
+        let max_size = endpoint.max_packet_size();
+
+        let mut reader = endpoint
+            .reader(max_size)
+            .with_read_timeout(Duration::from_secs(DEFAULT_TIMEOUT_SECONDS));
+
+        let mut pkt_reader = reader.until_short_packet();
+        let size = pkt_reader
+            .read_to_end(&mut buf.to_vec())
+            .map_err(|e| PrinterError::Io(e.to_string()))?;
+        pkt_reader.consume_end().map_err(|e| PrinterError::Io(e.to_string()))?;
 
         Ok(size)
     }

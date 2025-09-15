@@ -2,15 +2,16 @@ use escpos::driver::*;
 use escpos::errors::Result;
 use escpos::printer::Printer;
 use escpos::utils::*;
+use nusb::MaybeFuture;
 
 fn main() -> Result<()> {
     env_logger::init();
 
     // List of USB devices
-    for device in nusb::list_devices().unwrap() {
+    for device in nusb::list_devices().wait().unwrap() {
         println!(
             "Bus: {:03} address: {:03} VID: {:04x} PID: {:04x} Manufacturer: {} Product: {} S/N: {}",
-            device.bus_number(),
+            device.bus_id(),
             device.device_address(),
             device.vendor_id(),
             device.product_id(),

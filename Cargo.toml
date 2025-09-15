@@ -10,7 +10,7 @@ name = "escpos"
 readme = "README.md"
 repository = "https://github.com/fabienbellanger/escpos-rs"
 rust-version = "1.85"
-version = "0.16.0"
+version = "0.17.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -21,7 +21,7 @@ graphics = ["dep:image"]
 hidapi = ["dep:hidapi"]
 serial_port = ["dep:serialport"]
 usb = ["dep:rusb"]
-native_usb = ["dep:nusb", "dep:futures-lite"]
+native_usb = ["dep:nusb"]
 ui = []
 default = ["barcodes", "codes_2d"]
 full = [
@@ -39,10 +39,9 @@ full = [
 encoding_rs = "0.8.35"
 log = "0.4.28"
 
-futures-lite = { version = "2.6.1", optional = true }
 hidapi = { version = "2.6.3", optional = true }
 image = { version = "0.25.8", optional = true }
-nusb = { version = "0.1.14", optional = true }
+nusb = { version = "0.2.0", optional = true }
 rusb = { version = "0.9.4", optional = true }
 serialport = { version = "4.7.3", optional = true }
 
