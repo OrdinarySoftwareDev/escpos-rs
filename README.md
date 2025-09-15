@@ -53,7 +53,7 @@ cargo tarpaulin --all-features --tests
 
 _Results:_
 
-- [2025-01-16] `59.37% coverage, 1217/2050 lines covered`
+- [2025-09-15] `57.62% coverage, 1172/2034 lines covered`
 
 ## MSRV
 
