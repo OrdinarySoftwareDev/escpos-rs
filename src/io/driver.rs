@@ -429,14 +429,8 @@ impl NativeUsbDriver {
             .next()
             .ok_or_else(|| PrinterError::Io("no suitable interface number found for USB device".to_string()))?;
 
-        #[cfg(not(target_os = "windows"))]
         let interface = device
             .detach_and_claim_interface(interface_number)
-            .wait()
-            .map_err(|e| PrinterError::Io(e.to_string()))?;
-        #[cfg(target_os = "windows")]
-        let interface = device
-            .claim_interface(interface_number)
             .wait()
             .map_err(|e| PrinterError::Io(e.to_string()))?;
 
