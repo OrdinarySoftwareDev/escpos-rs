@@ -257,7 +257,7 @@ fn main() -> Result<()> {
 |   ✅   | `font()`                        | Text font (`ESC M`)                                   |            |
 |   ✅   | `flip()`                        | Text flip (`ESC V`)                                   |            |
 |   ✅   | `justify()`                     | Text justify (`ESC a`)                                |            |
-|   ✅   | `reserve()`                     | Text reserve color (`GS B`)                           |            |
+|   ✅   | `reverse()`                     | Text reverse color (`GS B`)                           |            |
 |   ✅   | `size()`                        | Text size (`GS !`)                                    |            |
 |   ✅   | `reset_size()`                  | Reset text size (`GS !`)                              |            |
 |   ✅   | `smoothing()`                   | Smoothing mode (`GS b`)                               |            |
