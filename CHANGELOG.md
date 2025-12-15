@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Added `Printer::backfeed()` for reverse paper movement using the ESC/POS `ESC j n` command.
+- Added `Printer::backfeed()` for reverse paper movement using the ESC/POS `ESC j` command.
   > Note: Not all printers support reverse feed; the command may be ignored by some models.
   
 ### Fixed
