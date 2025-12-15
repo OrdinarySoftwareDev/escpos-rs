@@ -25,6 +25,7 @@ pub const GS_PAPER_CUT_FULL: &[u8] = &[GS, b'V', b'A', 0];
 pub const GS_PAPER_CUT_PARTIAL: &[u8] = &[GS, b'V', b'A', 1];
 
 pub const ESC_PAPER_FEED: &[u8] = &[ESC, b'd'];
+pub const ESC_PAPER_BACKFEED: &[u8] = &[ESC, b'j'];
 
 // Text
 pub const ESC_CHARACTER_PAGE_CODE: &[u8] = &[ESC, b't'];

@@ -263,6 +263,7 @@ fn main() -> Result<()> {
 |   ✅   | `smoothing()`                   | Smoothing mode (`GS b`)                               |            |
 |   ✅   | `feed()`                        | Line feed (`ESC d`)                                   |            |
 |   ✅   | `feeds()`                       | Multiple lines feed (`ESC d`)                         |            |
+|   ✅   | `backfeed()`                    | Backfeed (`ESC j`)                                    |            |
 |   ✅   | `line_spacing()`                | Line spacing (`ESC 3`)                                |            |
 |   ✅   | `reset_line_spacing()`          | Reset line spacing (`ESC 2`)                          |            |
 |   ✅   | `upside_down()`                 | Upside-down mode (`ESC {`)                            |            |

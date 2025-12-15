@@ -15,6 +15,12 @@ fn main() -> Result<()> {
         .init()?
         .smoothing(true)?
         .page_code(PageCode::default())?
+        .writeln("The quick brown")?
+        .feed()?
+        .writeln("the lazy dog")?
+        .backfeed(0x62)? // not all printer models support backfeeding nor do they process it the same way
+        .writeln("fox jumps over")?
+        .feed()?
         .bold(true)?
         .underline(UnderlineMode::Single)?
         .writeln("Bold underline left")?

@@ -139,6 +139,13 @@ impl Protocol {
         cmd
     }
 
+    /// Backfeed
+    pub(crate) fn backfeed(&self, dots: u8) -> Command {
+        let mut cmd = ESC_PAPER_BACKFEED.to_vec();
+        cmd.push(dots);
+        cmd
+    }
+
     /// Reset line spacing
     pub(crate) fn reset_line_spacing(&self) -> Command {
         ESC_TEXT_RESET_LINE_SPACING.to_vec()

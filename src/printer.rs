@@ -299,6 +299,12 @@ impl<D: Driver> Printer<D> {
         self.command("line feeds", &[cmd])
     }
 
+    /// Backfeed
+    pub fn backfeed(&mut self, n: u8) -> Result<&mut Self> {
+        let cmd = self.protocol.backfeed(n);
+        self.command("line backfeed", &[cmd])
+    }
+
     /// Line spacing
     pub fn line_spacing(&mut self, value: u8) -> Result<&mut Self> {
         let cmd = self.protocol.line_spacing(value);
